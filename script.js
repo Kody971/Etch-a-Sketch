@@ -1,27 +1,64 @@
-for (let i = 0; i < 256; i++) {
-  const square = document.createElement('div')
-  square.style.height = '75px'
-  square.style.width = '75px'
-  square.style.border = '1px solid black'
-  document.querySelector('.container').appendChild(square)
+let baseTotalBox = 16
+
+const createBox = total => {
+  for (let i = 0; i < total ** 2; i++) {
+    const square = document.createElement('div')
+    square.style.height = Math.round(960 / total) + 'px'
+    square.style.width = Math.round(960 / total) + 'px'
+    document.querySelector('.container').appendChild(square)
+  }
 }
 
-const allSquare = [...document.querySelector('.container').children]
-console.log(allSquare)
-allSquare.forEach(item => {
-  if (item.style.backgroundColor != 'green') {
+const addEventBox = arr => {
+  arr.forEach(item => {
+    const r = Math.floor(Math.random() * 256)
+    const g = Math.floor(Math.random() * 256)
+    const b = Math.floor(Math.random() * 256)
+
     item.addEventListener(
       'mouseover',
-      () => (item.style.backgroundColor = 'green')
-    )
-  } else {
-    item.removeEventListener(
-      'mouseover',
-      () => (item.style.backgroundColor = 'green')
+      () => (item.style.backgroundColor = `rgb(${r},${g},${b})`)
     )
     item.addEventListener(
-      'mouseover',
+      'mousedown',
       () => (item.style.backgroundColor = 'transparent')
     )
+  })
+}
+
+const removeBox = arr => {
+  arr.forEach(item => {
+    item.remove()
+  })
+}
+
+const newGrid = arr => {
+  let userChoice
+  while (true) {
+    userChoice = Number(prompt('Enter new grid (max 100)'), 16)
+    if (
+      isNaN(userChoice) ||
+      userChoice < 16 ||
+      userChoice > 100 ||
+      userChoice === '' ||
+      userChoice === null
+    ) {
+      alert('Please insert number 1 to 100')
+      return
+    } else {
+      removeBox(arr)
+      createBox(userChoice)
+      const allSquare = [...document.querySelector('.container').children]
+      addEventBox(allSquare)
+      return
+    }
   }
+}
+
+createBox(baseTotalBox)
+const allSquare = [...document.querySelector('.container').children]
+addEventBox(allSquare)
+document.querySelector('.new-grid').addEventListener('click', event => {
+  const allSquare = [...document.querySelector('.container').children]
+  newGrid(allSquare, event)
 })
